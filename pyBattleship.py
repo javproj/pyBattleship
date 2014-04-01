@@ -75,15 +75,15 @@ class Player():
         self.gameGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] = hitMiss
     
     # Player tries a location (e.g. "F5") on the grid of another player
-    def move(self, opponent, loc, grid):
+    def move(self, opponent, loc):
         
         # If other player's grid @ location is occupied
-        if grid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "S":
+        if opponent.myGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "S":
             print "HIT - %s - %s!!!!" % (loc, opponent.getShipName(loc))
             self.gameGridUpdate(loc, "H")
             
         # If other player's grid @ location is NOT occupied
-        elif grid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "O":
+        elif opponent.myGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "O":
             print "MISS on %s!!!!" % (loc)
             self.gameGridUpdate(loc, "M")
     
@@ -204,12 +204,12 @@ while p1.hits < 18 and p2.hits < 18:
         if p1turn:  # If it's player 1's turn
             p1.printGameGrid()
             hitLoc = raw_input("Player 1 - Enter hit location: ")
-            p1.move(p2, hitLoc, p2.myGrid)
+            p1.move(p2, hitLoc)
             p1turn = False
             p2.hits += 1
         else:       # Player 2 turn
             p2.printGameGrid()
             hitLoc = raw_input("Player 2 - Enter hit location: ")
-            p2.move(p1, hitLoc, p1.myGrid)
+            p2.move(p1, hitLoc)
             p1turn = True
             p1.hits += 1
