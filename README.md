@@ -1,0 +1,4 @@
+pyBattleship
+============
+
+Python Battleship game
