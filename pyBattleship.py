@@ -1,3 +1,14 @@
+"""
+    Author: Jesse Vazquez, Jesse.Vazquez@trincoll.edu
+    Last Modified: 04/01/2014
+    
+    This is a recreation of the Battleship board game where players place
+    ships on a 10x10 grid, then proceed to try and sink the enemie's 5 ships
+    
+    battleshipAI.py will contain functions for the computer populating a grid 
+    with pieces and determining which location to try and hit.
+"""
+
 import sys
 import easygui
 from collections import OrderedDict
