@@ -10,7 +10,8 @@
 """
 
 import sys
-import easygui
+import easygui  
+import battleshipAI
 from collections import OrderedDict
 
 
@@ -43,6 +44,11 @@ class Player():
         
         # Need variable to keep track of how many times a player is hit
         self.hits = 0
+        
+        # Need variable to keep track of hit data for the last hit
+        # Format: [boatName, (hitLocations, hitsLeft)]
+        # e.g.: ["Aircraft Carrier (5)", (["E2", "E3"], 3)]
+        self.hitData = []
         
         # Need variable to keep track of how many hits a boat has
         self.shipHits = OrderedDict([
@@ -189,8 +195,11 @@ class Player():
 # Create player instances
 p1 = Player(p1Pieces)
 p2 = Player(p2Pieces)
-print p1.printShipLocations()
-print p2.printShipLocations()
+
+# Variables to hold the last hit location
+# [boatName, hitLocation, timesHit]
+p1LastHit = []
+p2LastHit = []
 
 # Variable to determine who's turn it is
 p1turn = True
