@@ -41,11 +41,46 @@ def createShipArray():
 # Need function to decide on next hit location based on the last hit, 
 # amount of hits, and boat hit
 # Outputs a coordinate string
-def nextHit(hitData, player):
-    pass
+def nextHit(hitData, gameGrid):
+    # Variable to be returned with coord value
+    hitThis = ""
+    
+    
     # If coord is at the edge of the grid
     # If there's a coord between two hits
     
+# Function to return potential hit locations
+def potentialHits(grid, shipHits, hitData):
+    # Array to return later
+    pHits = []
+    
+    # Array to hold all hit locations of ships alive
+    allHits = []
+    
+    # Populate array
+    for item in hitData:
+        if hitData[item] != [] and shipHits[item] != 0:
+            allHits.extend(hitData[item])
+    
+    for boat in shipHits:
+        # Make sure the ship is not sunk already and hasn't been hit
+        if shipHits[boat] != 0 and shipHits[boat] != int(boat[-2]):
+            hitsLeft = shipHits[boat]
+            coordsHit = hitData[boat]
+            
+            if direction(coordsHit) is 0:   # Horizontal
+                
+                
+            else:   # Vertical
+                #
+    
+    # Trim results in case there is a miss or sunken shit at location
+    return potentialTrim(pHits, grid)
+
+# Takes in all potential hits and determines which we can eliminate
+# based on game grid "M"'s and "X"'s
+def potentialTrim(potHits, grid):
+    pass
 
 # Function to get a start and end coord set based on direction and
 # Length of the ship to be placed
@@ -156,3 +191,25 @@ def coordsTaken(arr):
             return True
         else:
             return False
+            
+# Need a function shipDown (same as in pyBattleship class)
+def shipDown(shipHits, boat):
+    """ Returns True if the boat's hit value is at zero, meaning it is sunk"""
+    if shipHits[boat] is 0:
+        return True
+    else:
+        return False
+
+# Function to figure out direction based on array of hits
+def direction(hits):
+    if hits[0][:1] is hits[1][:1]:
+        return 0    # Horizontal
+    else:
+        return 1    # Vertical
+
+# Function to remove coords from potentials based on if it's a miss in a grid
+def cleanGridMisses(grid, potentials):
+    for coord in potentials:
+        if grid[ord(coord[:1]) % 65][int(coord[1:])] is 'M':
+            potentials.remove(coord)
+    return potentials

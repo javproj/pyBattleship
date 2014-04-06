@@ -46,9 +46,18 @@ class Player():
         self.hits = 0
         
         # Need variable to keep track of hit data for the last hit
-        # Format: [boatName, (hitLocations, hitsLeft)]
-        # e.g.: ["Aircraft Carrier (5)", (["E2", "E3"], 3)]
-        self.hitData = []
+        # Format: [boatName, ([hitLocations])]
+        # e.g.: ["Aircraft Carrier (5)", (["E2", "E3"])]
+        self.hitData = OrderedDict([
+            ("Aircraft Carrier (5)", []),
+            ("Battleship (4)", []),
+            ("Submarine (3)", []),
+            ("Cruiser (3)", []),
+            ("Patrol Boat (2)", [])
+        ])
+        
+        # Variable to hold string of last player's ship that was hit
+        self.lastShipHit = ""
         
         # Need variable to keep track of how many hits a boat has
         self.shipHits = OrderedDict([
@@ -98,6 +107,7 @@ class Player():
         if opponent.myGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "S":
             print "HIT - %s - %s!!!!" % (loc, opponent.getShipName(loc))
             self.gameGridUpdate(loc, "H")
+            self.lastShipHit = opponent.getShipName(loc)
             
         # If other player's grid @ location is NOT occupied
         elif opponent.myGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "O":
@@ -150,6 +160,9 @@ class Player():
                 # If the boat is down, return the boat name and that it's down
                 # Otherwise return the boat value
                 if self.shipDown(boat) is True:
+                    #Change game grid to reflect sunken ship
+                    sunkenShipUpdate(boat)
+                    
                     return "%s is down!" % (boat)
                 else:
                     return boat
@@ -180,6 +193,12 @@ class Player():
         for line in self.gameGrid:
             print chr(chrStart), line
             chrStart += 1
+    
+    # Updates the game grid to relfect a sunken ship with 'X'
+    def sunkenShipUpdate(boat):
+        coords = self.hitData[boat]
+        for coord in coords:
+            self.gameGrid[ord(coord[:1]) % 65][int(coord[1:])] = 'X'
     
     def printShipHits(self):
         """ Print the shipHits dictionary, used for testing"""
