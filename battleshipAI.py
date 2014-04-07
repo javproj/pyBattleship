@@ -45,10 +45,6 @@ def nextHit(hitData, gameGrid):
     # Variable to be returned with coord value
     hitThis = ""
     
-    
-    # If coord is at the edge of the grid
-    # If there's a coord between two hits
-    
 # Function to return potential hit locations which haven't already been touched
 def potentialHits(grid, shipHits, hitData):
     # Array to return later
@@ -57,13 +53,15 @@ def potentialHits(grid, shipHits, hitData):
     # Array to hold all hit locations of ships alive
     allHits = []
     
-    # Variables to hold high and low number counts
+    # Variables to hold number counts
     highNum = 0
     lowNum = 0
+    startNum = 0
     
-    # Variables to hold start and end letters decimal value
+    # Variables to hold letter decimal values
     startLetter = 65
     endLetter = 74
+    letter = 65
     
     # Populate array
     for item in hitData:
@@ -119,25 +117,26 @@ def potentialHits(grid, shipHits, hitData):
                         pHits.append(coordsHit[0][:1] + str(a))
                 # Right coords    
                 for b in range(startNum, 11):
-                    if startNum < b < startNum + hitsLeft:
+                    if startNum < b <= startNum + hitsLeft:
                         pHits.append(coordsHit[0][:1] + str(b))
                 # Coords above
                 for c in range(65, letter):
                     if letter - hitsLeft <= c < letter:
-                        pHits.append(chr(c) + coordsHit[1:])
+                        pHits.append(chr(c) + coordsHit[0][1:])
                 # Coords below
                 for d in range(letter, 75):
                     if letter < d <= letter + hitsLeft:
-                        pHits.append(chr(d) + coordsHit[1:])
+                        pHits.append(chr(d) + coordsHit[0][1:])
     
     # Trim results in case there is a miss or sunken shit at location
     return potentialTrim(pHits, grid)
 
-# Takes in all potential hits and determines which we can eliminate
-# based on game grid "M"'s and "X"'s
-def potentialTrim(potHits, grid):
-    # need to handle for counting over 10 on the grid
-    pass
+# Function to only return potential coords that haven't been touched
+def potentialTrim(grid, potentials):
+    for coord in potentials:
+        if grid[ord(coord[:1]) % 65][int(coord[1:])] != 'O':
+            potentials.remove(coord)
+    return potentials
 
 # Function to get a start and end coord set based on direction and
 # Length of the ship to be placed
@@ -264,10 +263,3 @@ def direction(hits):
         return 1    # Vertical
     else:
         return 2    # Case - single array
-
-# Function to only return potential coords that haven't been touched
-def cleanGridMisses(grid, potentials):
-    for coord in potentials:
-        if grid[ord(coord[:1]) % 65][int(coord[1:])] != 'O':
-            potentials.remove(coord)
-    return potentials
