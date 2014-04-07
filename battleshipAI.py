@@ -4,7 +4,7 @@ import random
 allCoords = []
 
 # Need function to create an array of ship locations
-# Format:
+# Returns ship array in format:
 # [acStart, acEnd, batStart, batEnd, subStart, subEnd, cruiseStart, cruiseEnd, patrolStart, patrolEnd]
 def createShipArray():
     # Array to hold string coordinates of ships
@@ -38,13 +38,6 @@ def createShipArray():
     # Now return the final array of 10 string values
     return shipArray
 
-# Need function to decide on next hit location based on the last hit, 
-# amount of hits, and boat hit
-# Outputs a coordinate string
-def nextHit(hitData, gameGrid):
-    # Variable to be returned with coord value
-    hitThis = ""
-    
 # Function to return potential hit locations which haven't already been touched
 def potentialHits(grid, shipHits, hitData):
     # Array to return later
@@ -129,14 +122,106 @@ def potentialHits(grid, shipHits, hitData):
                         pHits.append(chr(d) + coordsHit[0][1:])
     
     # Trim results in case there is a miss or sunken shit at location
-    return potentialTrim(pHits, grid)
+    return potentialTrim(grid, pHits, hitsLeft)
 
 # Function to only return potential coords that haven't been touched
-def potentialTrim(grid, potentials):
-    for coord in potentials:
-        if grid[ord(coord[:1]) % 65][int(coord[1:])] != 'O':
-            potentials.remove(coord)
-    return potentials
+# Also trims coords that are blocked by misses and other boats
+def potentialTrim(grid, potentials, hits):
+    
+    # Variable to return later
+    trimmed = []
+    
+    # Variables to hold distance counts
+    leftHits = hits
+    rightHits = hits
+    
+    # Variables to hold location of first miss or ship horizontal
+    leftLoc = 0
+    rightLoc = 0
+    
+    # Variables to hold location of first miss/ship Vertical
+    topLoc = 65
+    botLoc = 74
+    
+    # Variables to hold array of game grid values
+    gridPotentials = []
+    gridPotentials = gridCoordsTranslate(potentials, grid)
+    
+    
+    
+    # Now trim based on direction
+    if direction(potentials) is 2: # single hit coord only
+        # Variables to break up the grid and hits
+        allGrids = []
+        allHits = []
+        
+        # Set up separated grids
+        allHits[0].extend(potentials[:potLength/2])
+        allHits[1].extend(potentials[potLength/2:])
+        allGrids[0].extend(grid1[:len(potentials)/2])
+        allGrids[1].extend(grid1[len(potentials)/2:])
+        
+        # Now loop through both separated grids and trim
+        for item, grids in zip(allHits, allGrids):
+            # trim left    
+            for b in range(hits - 1, -1, -1):
+                if grids[b] != 'O':
+                    leftHits -= 1
+                    if leftHits == hits - 1:    # First hit location
+                        leftLoc = b
+            if leftHits < hits:
+                trimmed.extend(item[leftLoc + 1:hits])
+            else: # No coords blocking
+                trimmed.extend(item[:hits])
+            
+            # trim right
+            for c in range(hits, len(item)):
+                if grids[c] != 'O':
+                    rightHits -= 1
+                    if rightHits == hits - 1:    # First hit location
+                        rightLoc = c
+            if rightHits < hits: # 
+                trimmed.extend(item[hits:rightLoc])
+            else:   # No coords blocking
+                trimmed.extend(item[hits:])
+    
+            # Reset hits count
+            leftHits = hits
+            rightHits = hits
+        
+        # Returned trimmed
+        return trimmed
+        
+    elif direction(potentials) == 0 or direction(potentials) == 1:   # Horiz/Vert
+        # Trim Left
+        for a in range(hits - 1, -1, -1):
+            if gridPotentials[a] != 'O':
+                leftHits -= 1
+                if leftHits == hits - 1:    # First hit location
+                    leftLoc = a
+        if leftHits < hits: # 
+           trimmed.extend(potentials[leftLoc + 1:hits])
+        else: # No coords blocking
+           trimmed.extend(potentials[:hits])
+           
+       # Trim Right
+        for b in range(hits, len(potentials)):
+            if gridPotentials[b] != 'O':
+                rightHits -= 1
+                if rightHits == hits - 1:    # First hit location
+                    rightLoc = b
+        if rightHits < hits: # 
+            trimmed.extend(potentials[hits:rightLoc])
+        else:   # No coords blocking
+            trimmed.extend(potentials[hits:])
+           
+        return trimmed
+# Function to return an translate array of coords to their grid values
+def gridCoordsTranslate(poten, gameGrid):
+    grid = []
+    for coord in poten:
+        grid.append(gameGrid[ord(coord[:1]) % 65][int(coord[1:])])
+    return grid
 
 # Function to get a start and end coord set based on direction and
 # Length of the ship to be placed
@@ -262,4 +347,11 @@ def direction(hits):
     elif hits[0][1:] is hits [1][1:]:
         return 1    # Vertical
     else:
-        return 2    # Case - single array
+        return 2    # Case - single element array
+
+# Function returns True if location has a miss
+def missed(grid, coord):
+    if grid[ord(coord[:1]) % 65][int(coord[1:])] is 'M':
+        return True
+    else:
+        return False
