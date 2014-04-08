@@ -7,6 +7,7 @@ allCoords = []
 # Returns ship array in format:
 # [acStart, acEnd, batStart, batEnd, subStart, subEnd, cruiseStart, cruiseEnd, patrolStart, patrolEnd]
 def createShipArray():
+    """ Returns a ship array of randoms piece coordinates to place ships on the grid."""
     # Array to hold string coordinates of ships
     # Returned at the end
     shipArray = []
@@ -40,6 +41,7 @@ def createShipArray():
 
 # Function to return potential hit locations which haven't already been touched
 def potentialHits(grid, shipHits, hitData):
+    """ Returns all potential hit coordinates based on the hitData and shipHits of that ship. First it makes sure the boat is not sunk  and has at least 1 hit, then based on dirction of the boat (or if it's just a single coord), get all possible coordinates where the ship can be."""
     # Array to return later
     pHits = []
     
@@ -127,7 +129,7 @@ def potentialHits(grid, shipHits, hitData):
 # Function to only return potential coords that haven't been touched
 # Also trims coords that are blocked by misses and other boats
 def potentialTrim(grid, potentials, hits):
-    
+    """Returns only the coordinates that most likely have a ship on them. It trims coordinates based on where the ship has already been hit and how many hits it has left."""
     # Variable to return later
     trimmed = []
     
@@ -158,8 +160,8 @@ def potentialTrim(grid, potentials, hits):
         # Set up separated grids
         allHits[0].extend(potentials[:potLength/2])
         allHits[1].extend(potentials[potLength/2:])
-        allGrids[0].extend(grid1[:len(potentials)/2])
-        allGrids[1].extend(grid1[len(potentials)/2:])
+        allGrids[0].extend(grid[:len(potentials)/2])
+        allGrids[1].extend(grid[len(potentials)/2:])
         
         # Now loop through both separated grids and trim
         for item, grids in zip(allHits, allGrids):
@@ -218,6 +220,7 @@ def potentialTrim(grid, potentials, hits):
         return trimmed
 # Function to return an translate array of coords to their grid values
 def gridCoordsTranslate(poten, gameGrid):
+    """Returns an array that is the gameGrid coordinate equivalent of the potential hits. For example, it should look like: ["O", "O", "M", "O]"""
     grid = []
     for coord in poten:
         grid.append(gameGrid[ord(coord[:1]) % 65][int(coord[1:])])
@@ -226,6 +229,7 @@ def gridCoordsTranslate(poten, gameGrid):
 # Function to get a start and end coord set based on direction and
 # Length of the ship to be placed
 def directionCoords(direc, length):
+    """ Returns coordinates for a ship based on which direction and the size of the ship """
     # to be returned later
     startEnd = []
     
@@ -273,6 +277,7 @@ def directionCoords(direc, length):
 
 # Need a function to return a random hit location
 def randCoord():
+    """ Returns a random coordinate"""
     # Random value between 65 and 74 (need to put 75)
     letterCode = random.randrange(65, 75)
     
@@ -284,6 +289,7 @@ def randCoord():
 # Function to get full coordinates based on start and end values, then store them in the 
 # allCoords array
 def updateCoords(start, end):
+    """ Used to update the allCoords global list in creating a ship Array"""
     positions = []
     chrStart = 0
     length = 0
@@ -305,6 +311,7 @@ def updateCoords(start, end):
 
 # Function to return list coordinates between start and end values
 def getAllCoords(start, end):
+    """ Returns all coordinates between start and end positions"""
     positions = []
     chrStart = 0
     length = 0
@@ -326,6 +333,7 @@ def getAllCoords(start, end):
 
 # Returns False if the coordinates aren't in use
 def coordsTaken(arr):
+    """ Checks to see if any of the coordinates in arr exist in allCoords, returns False if not. """
     for item in arr:
         if item in allCoords:
             return True
@@ -342,15 +350,17 @@ def shipDown(shipHits, boat):
 
 # Function to figure out direction based on array of hits
 def direction(hits):
+    """Given an array of hit coordinates, return value based on direction"""
     if hits[0][:1] is hits[1][:1]:
         return 0    # Horizontal
     elif hits[0][1:] is hits [1][1:]:
         return 1    # Vertical
-    else:
+    elif len(hits) == 1:
         return 2    # Case - single element array
 
 # Function returns True if location has a miss
 def missed(grid, coord):
+    """Return True if the coord in the grid is a miss. """
     if grid[ord(coord[:1]) % 65][int(coord[1:])] is 'M':
         return True
     else:

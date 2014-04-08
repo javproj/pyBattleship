@@ -18,8 +18,8 @@ from collections import OrderedDict
 # Piece locations
 # An array storing the string locations of all pieces
 # [acStart, acEnd, batStart, batEnd, subStart, subEnd, cruiseStart, cruiseEnd, patrolStart, patrolEnd]
-p1Pieces = ['E2', 'E6', 'A1', 'D1', 'H2', 'H4', 'C8', 'E8', 'J5', 'J6']
-p2Pieces = ['A1', 'A5', 'C4', 'F4', 'A9', 'C9', 'J1', 'J3', 'E8', 'F8']
+p1Pieces = battleshipAI.createShipArray()
+p2Pieces = battleshipAI.createShipArray()
 
 ### Player Class ###
 class Player():
@@ -222,9 +222,6 @@ p2LastHit = []
 
 # Variable to determine who's turn it is
 p1turn = True
-
-# Variable to hold the hit location
-hitLoc = ""
 
 while p1.hits < 18 and p2.hits < 18:
     print p1.hits, p2.hits
