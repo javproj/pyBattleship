@@ -351,12 +351,13 @@ def shipDown(shipHits, boat):
 # Function to figure out direction based on array of hits
 def direction(hits):
     """Given an array of hit coordinates, return value based on direction"""
-    if hits[0][:1] is hits[1][:1]:
-        return 0    # Horizontal
-    elif hits[0][1:] is hits [1][1:]:
-        return 1    # Vertical
-    elif len(hits) == 1:
-        return 2    # Case - single element array
+    if len(hits) < 2:
+        return 2    # Single Element Array
+    else: 
+        if hits[0][:1] is hits[1][:1]:
+            return 0    # Horizontal
+        elif hits[0][1:] is hits [1][1:]:
+            return 1    # Vertical
 
 # Function returns True if location has a miss
 def missed(grid, coord):

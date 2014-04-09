@@ -10,7 +10,8 @@
 """
 
 import sys
-import easygui  
+import easygui
+import random  
 import battleshipAI
 from collections import OrderedDict
 
@@ -108,6 +109,7 @@ class Player():
             print "HIT - %s - %s!!!!" % (loc, opponent.getShipName(loc))
             self.gameGridUpdate(loc, "H")
             self.lastShipHit = opponent.getShipName(loc)
+            opponent.hits += 1
             
         # If other player's grid @ location is NOT occupied
         elif opponent.myGrid[ord(loc[:1]) % 65][int(loc[1:]) - 1] is "O":
@@ -161,7 +163,7 @@ class Player():
                 # Otherwise return the boat value
                 if self.shipDown(boat) is True:
                     #Change game grid to reflect sunken ship
-                    sunkenShipUpdate(boat)
+                    self.sunkenShipUpdate(boat)
                     
                     return "%s is down!" % (boat)
                 else:
@@ -174,6 +176,19 @@ class Player():
         else:
             return False
         
+    # Need function to return True if the player has a boat which was hit on the board
+    def hasHits(self):
+        """ Returns True if player has a ship on the board which has been hit and is not sunk."""
+        count = 0
+        for item in self.hitData:
+            if len(self.hitData[item]) != 0 and len(self.hitData[item]) != int(self.hitData[item][-2]):
+                count += 1
+        
+        if count != 0:
+            return True
+        else:
+            return False
+    
     # Prints the Player grid with ships placed
     def printPlayerGrid(self):
         """ Prints the player grid with appropriate labels"""
@@ -195,7 +210,7 @@ class Player():
             chrStart += 1
     
     # Updates the game grid to relfect a sunken ship with 'X'
-    def sunkenShipUpdate(boat):
+    def sunkenShipUpdate(self, boat):
         coords = self.hitData[boat]
         for coord in coords:
             self.gameGrid[ord(coord[:1]) % 65][int(coord[1:])] = 'X'
@@ -220,6 +235,10 @@ p2 = Player(p2Pieces)
 p1LastHit = []
 p2LastHit = []
 
+# Arrays to hold all coordinates that a player has tried
+p1allTries = []
+p2allTries = []
+
 # Variable to determine who's turn it is
 p1turn = True
 
@@ -239,13 +258,32 @@ while p1.hits < 18 and p2.hits < 18:
     else:
         if p1turn:  # If it's player 1's turn
             p1.printGameGrid()
+            
             hitLoc = raw_input("Player 1 - Enter hit location: ")
+            
+            while hitLoc in p1allTries:
+                print "Already tried that coord, choose another"
+                hitLoc = raw_input("Player 1 - Enter hit location: ")
+            
+            p1allTries.append(hitLoc)   # Add to tries array
+            
             p1.move(p2, hitLoc)
             p1turn = False
-            p2.hits += 1
-        else:       # Player 2 turn
-            p2.printGameGrid()
-            hitLoc = raw_input("Player 2 - Enter hit location: ")
+        else:       # Player 2 turn (comp)
+            print "Computer's Turn"
+            
+            if p1.hits < 1 and p1.hasHits() == False:   # Need a random coord
+                hitLoc = battleshipAI.randCoord()
+                
+                while hitLoc in p1allTries: # No duplicates
+                    hitLoc = battleshipAI.randCoord()
+                
+                p2allTries.append(hitLoc) #Add to p2 Tries array
+            else:
+                potentials = battleshipAI.potentialHits(p1.gameGrid, p1.shipHits, p1.hitData)
+                hitLoc = potentials[random.randrange(0, len(potentials))]
+                p2allTries.append(hitLoc)
+                
+            print "Computer tries %s" % (hitLoc)
             p2.move(p1, hitLoc)
             p1turn = True
-            p1.hits += 1

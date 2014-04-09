@@ -5,6 +5,8 @@ Python Battleship game
 
 Need to Update the main file so that you can play the computer.
 
+Still working on bugs in my functions.
+
 AI is all set (battleshipAI.py). Main functions for the AI are:
 
 createShipArray() -> Creates a random array of coordinates for ship placement
