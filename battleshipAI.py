@@ -19,14 +19,20 @@ def createShipArray():
     tempCoord = []
     
     for num in range(0, len(shipLengths)):
+        #Reset All Coords in case it's run multiple times
+        if num == 0:
+            allCoords = []
+        
         # Determine which direction to place a piece - 
         # 0 = Horizontal, 1 = Vertical
         direction = random.randrange(0,2)
         
         tempCoord = directionCoords(direction, shipLengths[num])
         
+        print getAllCoords(tempCoord[0], tempCoord[1])
+        print coordsTaken(getAllCoords(tempCoord[0], tempCoord[1]))
         # If these coordinates are in use, try again
-        while coordsTaken(getAllCoords(tempCoord[0], tempCoord[1])):
+        while coordsTaken(getAllCoords(tempCoord[0], tempCoord[1])) is True:
             tempCoord = directionCoords(direction, shipLengths[num])
         
         # Append to shipArray
@@ -70,58 +76,62 @@ def potentialHits(grid, shipHits, hitData):
             coordsHit = hitData[boat]
             coordsHit.sort()
             
-            if direction(coordsHit) is 0:   # Horizontal
-                # Get high and low numbers values
-                highNum = int(coordsHit[len(coordsHit) - 1][1:])
-                lowNum = int(coordsHit[0][1:])
+            if len(coordsHit) >= 1:
+                if direction(coordsHit) is 0:   # Horizontal
+                    # Get high and low numbers values
+                    highNum = int(coordsHit[len(coordsHit) - 1][1:])
+                    lowNum = int(coordsHit[0][1:])
                 
-                # Get potential hits
-                for a in range(1, lowNum):
-                    if lowNum - hitsLeft <= a < lowNum:
-                        pHits.append(coordsHit[0][:1] + str(a))
-                for b in range(lowNum, highNum + 1):
-                    if lowNum < b < highNum:
-                        pHits.append(coordsHit[0][:1] + str(b))
-                for c in range(highNum, 11):
-                    if highNum  < c <= highNum + hitsLeft:
-                        pHits.append(coordsHit[0][:1] + str(c))
+                    # Get potential hits
+                    for a in range(1, lowNum):
+                        if lowNum - hitsLeft <= a < lowNum:
+                            pHits.append(coordsHit[0][:1] + str(a))
+                    for b in range(lowNum, highNum + 1):
+                        if lowNum < b < highNum:
+                            pHits.append(coordsHit[0][:1] + str(b))
+                    for c in range(highNum, 11):
+                        if highNum  < c <= highNum + hitsLeft:
+                            pHits.append(coordsHit[0][:1] + str(c))
                 
-            elif direction(coordsHit) is 1:   # Vertical
-                # Get Start and end letter values
-                startLetter = ord(coordsHit[0][:1])
-                endLetter = ord(coordsHit[len(coordsHit) - 1][:1])
+                elif direction(coordsHit) is 1:   # Vertical
+                    # Get Start and end letter values
+                    startLetter = ord(coordsHit[0][:1])
+                    endLetter = ord(coordsHit[len(coordsHit) - 1][:1])
                 
-                # Get potential hits
-                for a in range(65, startLetter):
-                    if startLetter - hitsLeft <= a < startLetter:
-                        pHits.append(chr(a) + coordsHit[0][1:])
-                for b in range(startLetter, endLetter + 1):
-                    if startLetter < b < endLetter:
-                        pHits.append(chr(b) + coordsHit[0][1:])
-                for c in range(endLetter, 75):
-                    if endLetter < c <= endLetter + hitsLeft:
-                        pHits.append(chr(c) + coordsHit[0][1:])
+                    # Get potential hits
+                    for a in range(65, startLetter):
+                        if startLetter - hitsLeft <= a < startLetter:
+                            pHits.append(chr(a) + coordsHit[0][1:])
+                    for b in range(startLetter, endLetter + 1):
+                        if startLetter < b < endLetter:
+                            pHits.append(chr(b) + coordsHit[0][1:])
+                    for c in range(endLetter, 75):
+                        if endLetter < c <= endLetter + hitsLeft:
+                            pHits.append(chr(c) + coordsHit[0][1:])
             
-            else:   # Case - Single hit coord
-                startNum = int(coordsHit[0][1:])
-                letter = ord(coordsHit[0][:1])
+                else:   # Case - Single hit coord
+                    print coordsHit
+                    startNum = int(coordsHit[0][1:])
+                    letter = ord(coordsHit[0][:1])
                 
-                # Left coords
-                for a in range(1, startNum):
-                    if startNum - hitsLeft <= a < startNum:
-                        pHits.append(coordsHit[0][:1] + str(a))
-                # Right coords    
-                for b in range(startNum, 11):
-                    if startNum < b <= startNum + hitsLeft:
-                        pHits.append(coordsHit[0][:1] + str(b))
-                # Coords above
-                for c in range(65, letter):
-                    if letter - hitsLeft <= c < letter:
-                        pHits.append(chr(c) + coordsHit[0][1:])
-                # Coords below
-                for d in range(letter, 75):
-                    if letter < d <= letter + hitsLeft:
-                        pHits.append(chr(d) + coordsHit[0][1:])
+                    # Left coords
+                    for a in range(1, startNum):
+                        if startNum - hitsLeft <= a < startNum:
+                            pHits.append(coordsHit[0][:1] + str(a))
+                    # Right coords    
+                    for b in range(startNum, 11):
+                        if startNum < b <= startNum + hitsLeft:
+                            pHits.append(coordsHit[0][:1] + str(b))
+                    # Coords above
+                    for c in range(65, letter):
+                        if letter - hitsLeft <= c < letter:
+                            pHits.append(chr(c) + coordsHit[0][1:])
+                    # Coords below
+                    for d in range(letter, 75):
+                        if letter < d <= letter + hitsLeft:
+                            pHits.append(chr(d) + coordsHit[0][1:])
+            else:   # If boat has no hits, do nothing
+                pass
     
     # Trim results in case there is a miss or sunken shit at location
     return potentialTrim(grid, pHits, hitsLeft)
@@ -154,8 +164,8 @@ def potentialTrim(grid, potentials, hits):
     # Now trim based on direction
     if direction(potentials) is 2: # single hit coord only
         # Variables to break up the grid and hits
-        allGrids = []
-        allHits = []
+        allGrids = [[], []]
+        allHits = [[], []]
         
         # Set up separated grids
         allHits[0].extend(potentials[:potLength/2])
@@ -320,14 +330,14 @@ def getAllCoords(start, end):
     if start[:1] is end[:1]:
         length = int(end[1:]) - int(start[1:]) + 1
         for number in range(int(start[1:]), int(end[1:]) + 1):
-            positions += [str(start[:1] + str(number))]
+            positions.append(str(start[:1] + str(number)))
     
     # Same Column
     elif start[1:] is end[1:]:
         length = (ord(end[:1]) % 65) - (ord(start[:1]) % 65) + 1
         chrStart = ord(start[:1])
         for number in range(chrStart, chrStart + length):
-            positions += [str(chr(number) + start[1:])]
+            positions.append(str(chr(number) + start[1:]))
     
     return positions
 
@@ -335,10 +345,10 @@ def getAllCoords(start, end):
 def coordsTaken(arr):
     """ Checks to see if any of the coordinates in arr exist in allCoords, returns False if not. """
     for item in arr:
-        if item in allCoords:
-            return True
-        else:
-            return False
+        for store in allCoords:
+            if item in store:
+                return True
+    return False
             
 # Need a function shipDown (same as in pyBattleship class)
 def shipDown(shipHits, boat):

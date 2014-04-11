@@ -242,6 +242,9 @@ p2allTries = []
 # Variable to determine who's turn it is
 p1turn = True
 
+print p1Pieces
+print p2Pieces
+
 while p1.hits < 18 and p2.hits < 18:
     print p1.hits, p2.hits
     # If Player 1 has max hits, player 2 wins
