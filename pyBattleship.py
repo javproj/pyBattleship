@@ -15,13 +15,6 @@ import random
 import battleshipAI
 from collections import OrderedDict
 
-
-# Piece locations
-# An array storing the string locations of all pieces
-# [acStart, acEnd, batStart, batEnd, subStart, subEnd, cruiseStart, cruiseEnd, patrolStart, patrolEnd]
-p1Pieces = battleshipAI.createShipArray()
-p2Pieces = battleshipAI.createShipArray()
-
 ### Player Class ###
 class Player():
     """ 
@@ -223,7 +216,11 @@ class Player():
         """ Print the shipLocations dictionary, used for testing"""
         return self.shipLocations
 
-## Functions ##
+# Piece locations
+# An array storing the string locations of all pieces
+# [acStart, acEnd, batStart, batEnd, subStart, subEnd, cruiseStart, cruiseEnd, patrolStart, patrolEnd]
+p1Pieces = battleshipAI.createShipArray()
+p2Pieces = battleshipAI.createShipArray()
 
 ## Game State ##
 # Create player instances
@@ -241,9 +238,6 @@ p2allTries = []
 
 # Variable to determine who's turn it is
 p1turn = True
-
-print p1Pieces
-print p2Pieces
 
 while p1.hits < 18 and p2.hits < 18:
     print p1.hits, p2.hits

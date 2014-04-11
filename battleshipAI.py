@@ -29,8 +29,6 @@ def createShipArray():
         
         tempCoord = directionCoords(direction, shipLengths[num])
         
-        print getAllCoords(tempCoord[0], tempCoord[1])
-        print coordsTaken(getAllCoords(tempCoord[0], tempCoord[1]))
         # If these coordinates are in use, try again
         while coordsTaken(getAllCoords(tempCoord[0], tempCoord[1])) is True:
             tempCoord = directionCoords(direction, shipLengths[num])
