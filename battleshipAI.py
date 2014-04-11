@@ -166,8 +166,8 @@ def potentialTrim(grid, potentials, hits):
         allHits = [[], []]
         
         # Set up separated grids
-        allHits[0].extend(potentials[:potLength/2])
-        allHits[1].extend(potentials[potLength/2:])
+        allHits[0].extend(potentials[:len(potentials)/2])
+        allHits[1].extend(potentials[len(potentials)/2:])
         allGrids[0].extend(grid[:len(potentials)/2])
         allGrids[1].extend(grid[len(potentials)/2:])
         
