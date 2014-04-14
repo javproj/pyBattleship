@@ -1,6 +1,6 @@
 """
     Author: Jesse Vazquez, Jesse.Vazquez@trincoll.edu
-    Last Modified: 04/01/2014
+    Last Modified: 04/14/2014
     
     This is a recreation of the Battleship board game where players place
     ships on a 10x10 grid, then proceed to try and sink the enemie's 5 ships
@@ -10,7 +10,6 @@
 """
 
 import sys
-import easygui
 import random  
 import battleshipAI
 from collections import OrderedDict
